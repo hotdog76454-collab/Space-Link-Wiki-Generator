@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLF System Wiki Code Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --bg: #080c14;
+      --bg2: #0d1421;
+      --bg3: #111c2e;
+      --border: #1e3a5f;
+      --accent: #1a6bff;
+      --accent2: #00cfff;
+      --text: #c8ddf5;
+      --text-dim: #5a7fa8;
+      --input-bg: #0a1220;
+      --green: #00ff99;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 20% 50%, #0a1a3a44 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, #001a3344 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 20px #00cfff55;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2));
+      border-radius: 6px 0 0 6px;
+    }
+
+    .section h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .field input,
+    .field select {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      padding: 7px 10px;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px #1a6bff22;
+    }
+
+    .field select option { background: var(--bg3); }
+
+    .planet-block {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .planet-block h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+    }
+
+    .planet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+    }
+
+    .full-width { grid-column: 1 / -1; }
+
+    .note {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .btn-generate {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent), #0044cc);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: opacity 0.2s, box-shadow 0.2s;
+      text-transform: uppercase;
+    }
+
+    .btn-generate:hover {
+      opacity: 0.9;
+      box-shadow: 0 0 20px #1a6bff55;
+    }
+
+    .output-section {
+      display: none;
+      margin-top: 1.5rem;
+    }
+
+    .output-section.visible { display: block; }
+
+    .output-section h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+    }
+
+    .output-box {
+      background: #040810;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      white-space: pre;
+      overflow-x: auto;
+      color: var(--green);
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .btn-copy {
+      margin-top: 0.75rem;
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid var(--accent2);
+      border-radius: 4px;
+      color: var(--accent2);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-copy:hover { background: #00cfff22; }
+    .btn-copy.copied { color: var(--green); border-color: var(--green); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>⬡ Space Link Federation</h1>
+    <p>NMS Wiki System Page Code Generator</p>
+  </header>
+
+  <div class="section">
+    <h3>System Info</h3>
+    <div class="field-grid">
+      <div class="field"><label>Original name (before SLF prefix)</label><input type="text" id="orig_name" placeholder="e.g. Urmangt VII"></div>
+      <div class="field"><label>Star class</label><input type="text" id="star_class" placeholder="e.g. G4, F0p"></div>
+      <div class="field"><label>Star colour</label>
+        <select id="star_color">
+          <option>Yellow</option><option>Red</option><option>Blue</option><option>Green</option><option>Purple</option><option>White</option>
+        </select>
+      </div>
+      <div class="field"><label>Galactic coordinates</label><input type="text" id="coords" placeholder="e.g. 0E75:007D:096C:009B"></div>
+      <div class="field"><label>Portal glyphs (12 chars)</label><input type="text" id="glyphs" placeholder="e.g. 109BFE16D676"></div>
+      <div class="field"><label>Faction</label>
+        <select id="faction">
+          <option>Gek</option><option>Vy'keen</option><option>Korvax</option><option>Uncharted</option>
+        </select>
+      </div>
+      <div class="field"><label>Economy (galaxy map)</label><input type="text" id="economy" placeholder="e.g. Mining // Advanced"></div>
+      <div class="field"><label>Conflict level</label><input type="text" id="conflict" placeholder="e.g. Tranquil"></div>
+      <div class="field"><label>Has water worlds?</label>
+        <select id="water"><option>Yes</option><option>No</option></select>
+      </div>
+      <div class="field"><label>Has a gateway?</label>
+        <select id="gateway"><option>Yes</option><option>No</option></select>
+      </div>
+      <div class="field"><label>Dissonant?</label>
+        <select id="dissonant"><option>No</option><option>Yes</option></select>
+      </div>
+      <div class="field"><label>Discovery date</label><input type="text" id="disc_date" placeholder="e.g. 3 June 2026"></div>
+      <div class="field"><label>Discoverer name</label><input type="text" id="disc_name" value="KING-MINION2"></div>
+      <div class="field"><label>Number of planets</label>
+        <select id="planet_count">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          <option value="4" selected>4</option><option value="5">5</option><option value="6">6</option>
+          <option value="7">7</option><option value="8">8</option>
+        </select>
+      </div>
+      <div class="field"><label>Number of moons</label>
+        <select id="moon_count">
+          <option value="0" selected>0</option><option value="1">1</option>
+          <option value="2">2</option><option value="3">3</option><option value="4">4</option>
+        </select>
+      </div>
+      <div class="field full-width" style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" id="is_capital" style="width:auto;flex:0 0 auto">
+        <label style="text-transform:none;letter-spacing:0">This is the capital system</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Planets &amp; Moons</h3>
+    <p class="note">Change planet/moon count above first. Fill in what you have — leave the rest blank.</p>
+    <div id="planet_rows"></div>
+  </div>
+
+  <button class="btn-generate" onclick="buildOutput()">⬡ Generate Wiki Code</button>
+
+  <div class="output-section" id="output_section">
+    <h3>Generated Wiki Code</h3>
+    <div class="output-box" id="output_box"></div>
+    <button class="btn-copy" id="copy_btn" onclick="copyOutput()">Copy to clipboard</button>
+  </div>
+</div>
+
+<script>
+function buildRows() {
+  const pCount = parseInt(document.getElementById('planet_count').value);
+  const mCount = parseInt(document.getElementById('moon_count').value);
+  const total = pCount + mCount;
+  let html = '';
+  for (let i = 0; i < total; i++) {
+    const isMoon = i >= pCount;
+    const label = isMoon ? `Moon ${i - pCount + 1}` : `Planet ${i + 1}`;
+    html += `<div class="planet-block">
+      <h4>${label}</h4>
+      <div class="planet-grid">
+        <div class="field"><label>Name</label><input type="text" id="p${i}_name" placeholder="Planet name"></div>
+        <div class="field"><label>Type</label><input type="text" id="p${i}_type" placeholder="e.g. Paradise Planet"></div>
+        <div class="field"><label>Extreme weather?</label><select id="p${i}_weather"><option>No</option><option>Yes</option></select></div>
+        <div class="field"><label>Aggressive sentinels?</label><select id="p${i}_sent"><option>No</option><option>Yes</option></select></div>
+        <div class="field full-width"><label>Resources (comma separated)</label><input type="text" id="p${i}_res" placeholder="e.g. Copper, Paraffinium, Sodium"></div>
+        <div class="field full-width"><label>Notes (optional)</label><input type="text" id="p${i}_notes" placeholder="Any extra notes"></div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('planet_rows').innerHTML = html;
+}
+
+document.getElementById('planet_count').addEventListener('change', buildRows);
+document.getElementById('moon_count').addEventListener('change', buildRows);
+buildRows();
+
+function g(id) { return (document.getElementById(id)?.value || '').trim(); }
+
+/* ---- glyphs <-> coordinates (verified against SLF - Ganggya-Opiu) ---- */
+const RE12 = /^[0-9A-F]{12}$/;
+const RECO = /^[0-9A-F]{1,4}:[0-9A-F]{1,4}:[0-9A-F]{1,4}:[0-9A-F]{1,4}$/;
+const hx = (n, w) => ((n & ((1 << (4 * w)) - 1)) >>> 0).toString(16).toUpperCase().padStart(w, '0');
+function glyphsToCoords(glyphs) {
+  const s = glyphs.trim().toUpperCase();
+  if (!RE12.test(s)) throw new Error('Glyphs must be exactly 12 hex digits, e.g. 109BFE16D676');
+  const sss = s.slice(1,4), yy = s.slice(4,6), zzz = s.slice(6,9), xxx = s.slice(9,12);
+  const Xg = (parseInt(xxx,16) + 0x7FF) & 0xFFF;
+  const Yg = (parseInt(yy,16) - 0x81) & 0xFF;
+  const Zg = (parseInt(zzz,16) + 0x7FF) & 0xFFF;
+  const SSSS = parseInt('0' + sss, 16);
+  return hx(Xg,4) + ':' + hx(Yg,4) + ':' + hx(Zg,4) + ':' + hx(SSSS,4);
+}
+function coordsToGlyphs(coords, planetIndex) {
+  planetIndex = planetIndex || 1;
+  const c = coords.trim().toUpperCase().replace(/\s/g, '');
+  if (!RECO.test(c)) throw new Error('Coords must look like 0E75:007D:096C:009B');
+  const parts = c.split(':').map(p => parseInt(p,16));
+  const Xg = parts[0], Yg = parts[1], Zg = parts[2], SSSS = parts[3];
+  const xxx = (Xg - 0x7FF) & 0xFFF, zzz = (Zg - 0x7FF) & 0xFFF, yy = (Yg + 0x81) & 0xFF, sss = SSSS & 0xFFF;
+  return hx(planetIndex,1) + hx(sss,3) + hx(yy,2) + hx(zzz,3) + hx(xxx,3);
+}
+
+/* ---- auto-fill star colour from class ---- */
+const CLASS_COLOUR = {F:'Yellow',G:'Yellow',K:'Red',M:'Red',E:'Green',B:'Blue',O:'Blue',X:'Purple',Y:'Purple'};
+document.getElementById('star_class').addEventListener('input', function (e) {
+  const col = CLASS_COLOUR[(e.target.value.trim()[0] || '').toUpperCase()];
+  if (col) document.getElementById('star_color').value = col;
+});
+
+function buildOutput() {
+  const origName = g('orig_name');
+  const slfName = origName ? `SLF - ${origName}` : 'SLF - System Name';
+  // Enter EITHER glyphs OR coordinates — compute the other automatically.
+  let coords = g('coords').toUpperCase().replace(/\s/g, '');
+  let glyphs = g('glyphs').toUpperCase();
+  try {
+    if (glyphs) { coords = glyphsToCoords(glyphs); }
+    else if (coords) { glyphs = coordsToGlyphs(coords); }
+  } catch (err) {
+    alert('Coordinate / glyph problem:\n' + err.message + '\n\nFix it and generate again.');
+  }
+  if (coords) document.getElementById('coords').value = coords;
+  if (glyphs) document.getElementById('glyphs').value = glyphs;
+
+  const isCapital = document.getElementById('is_capital').checked;
+  let summary = "'''" + slfName + "''' is a [[star system]] in the [[Capeki Spur]].";
+  if (isCapital) summary += ' Also the capital system of [[Space Link Federation]].';
+
+  const pCount = parseInt(g('planet_count') || 4);
+  const mCount = parseInt(g('moon_count') || 0);
+  const total = pCount + mCount;
+  const discName = g('disc_name') || 'KING-MINION2';
+  const discDate = g('disc_date') || 'dd month yyyy';
+
+  let planetRows = '';
+  for (let i = 0; i < total; i++) {
+    const name = g(`p${i}_name`) || `Planet ${i + 1}`;
+    const type = g(`p${i}_type`) || '';
+    const weather = (document.getElementById(`p${i}_weather`)?.value || 'No').toUpperCase();
+    const sent = (document.getElementById(`p${i}_sent`)?.value || 'No').toUpperCase();
+    const res = g(`p${i}_res`) || '';
+    const notes = g(`p${i}_notes`) || '';
+
+    // Auto-link resources
+    const linkedRes = res.split(',').map(r => {
+      const t = r.trim();
+      return t ? `[[${t}]]` : '';
+    }).filter(Boolean).join(', ');
+
+    planetRows += `|-
+| [[File:nmsMisc_NotAvailable.png|150px]]
+| [[${name}]]
+| ${type}
+| ${weather}
+| ${sent}
+|-
+|colspan=2 | '''Resources''': ${linkedRes}
+|colspan=3 | '''Notes''': ${notes}
+`;
+  }
+
+  const coordParts = coords.replace(/:/g, '|');
+
+  const output = `{{Version|Swarm}}
+{{System infobox
+| name = ${slfName}
+| image = nmsMisc_NotAvailable.png
+| galaxy = Eissentam
+| region = Capeki Spur
+| multiplestars =
+| color = ${g('star_color')}
+| class = ${g('star_class')}
+| distance =
+| coordinates = ${coords}
+| planet = ${pCount}
+| moon = ${mCount}
+| water = ${g('water')}
+| dissonant = ${g('dissonant') === 'Yes' ? 'Yes' : ''}
+| gateway = ${g('gateway')}
+| faction = ${g('faction')}
+| economy = ${g('economy')}
+| economysell =
+| economybuy =
+| wealth =
+| conflict = ${g('conflict')}
+| mode = Normal
+| civilized = Space Link Federation
+| discoveredlink = ${discName}
+| release = Swarm
+| platform = PS5, PC
+}}
+'''${slfName}''' is a star system.
+
+==Summary==
+${summary}
+
+==Alias Names==
+{{aliasc|text=Original|name=${origName}}}
+{{aliasc|text=Current|name=${slfName}}}
+
+==Discovery==
+Discovered by PC/PS explorer ''${discName}'' on ${discDate}.
+
+==Planets & Moons==
+{| class="article-table" style="width:100%; max-width: 1000px;"
+|-
+! width=150 | Planet Image
+! Planet Name
+! width=200 | Type
+! width=150 | Extreme<br/>Weather
+! width=150 | Aggressive<br/>Sentinels
+${planetRows}|}
+
+==Location Information==
+===Coordinates===
+{{coords|${coordParts}}}
+
+===Glyphs===
+{{Gl|${glyphs}}}
+
+===Navigation Images===
+
+===System Location===
+
+==Bases==
+
+==Additional Information==
+Claimed by the [[Space Link Federation]] as part of their mission to document the known universe before the Atlas collapse.
+
+==Gallery==
+<gallery>
+nmsMisc_NotAvailable.png|Caption of the image
+</gallery>`;
+
+  document.getElementById('output_box').textContent = output;
+  const sec = document.getElementById('output_section');
+  sec.classList.add('visible');
+  sec.scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyOutput() {
+  const text = document.getElementById('output_box').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy_btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy to clipboard';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
