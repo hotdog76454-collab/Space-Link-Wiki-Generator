@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLF Base Wiki Code Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --bg: #080c14;
+      --bg2: #0d1421;
+      --bg3: #111c2e;
+      --border: #1e3a5f;
+      --accent: #1a6bff;
+      --accent2: #00cfff;
+      --text: #c8ddf5;
+      --text-dim: #5a7fa8;
+      --input-bg: #0a1220;
+      --green: #00ff99;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 20% 50%, #0a1a3a44 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, #001a3344 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 20px #00cfff55;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .nav-link {
+      display: inline-block;
+      margin-top: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8rem;
+      border: 1px solid var(--border);
+      padding: 5px 14px;
+      border-radius: 4px;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .nav-link:hover { background: #1a6bff22; box-shadow: 0 0 12px #1a6bff44; }
+
+    .section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2));
+      border-radius: 6px 0 0 6px;
+    }
+
+    .section h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .field input,
+    .field select {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      padding: 7px 10px;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px #1a6bff22;
+    }
+
+    .field select option { background: var(--bg3); }
+
+    .full-width { grid-column: 1 / -1; }
+
+    .note {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .btn-generate {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent), #0044cc);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: opacity 0.2s, box-shadow 0.2s;
+      text-transform: uppercase;
+    }
+
+    .btn-generate:hover {
+      opacity: 0.9;
+      box-shadow: 0 0 20px #1a6bff55;
+    }
+
+    .output-section {
+      display: none;
+      margin-top: 1.5rem;
+    }
+
+    .output-section.visible { display: block; }
+
+    .output-section h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+    }
+
+    .output-box {
+      background: #040810;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      white-space: pre;
+      overflow-x: auto;
+      color: var(--green);
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .btn-copy {
+      margin-top: 0.75rem;
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid var(--accent2);
+      border-radius: 4px;
+      color: var(--accent2);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-copy:hover { background: #00cfff22; }
+    .btn-copy.copied { color: var(--green); border-color: var(--green); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>⬡ Space Link Federation</h1>
+    <p>NMS Wiki Base Page Code Generator</p>
+    <a class="nav-link" href="index.html">⬡ System Page Generator →</a>
+  </header>
+
+  <div class="section">
+    <h3>Base Info</h3>
+    <div class="field-grid">
+      <div class="field"><label>Base name</label><input type="text" id="b_name" placeholder="e.g. SLF Desert Base"></div>
+      <div class="field"><label>System name</label><input type="text" id="b_system" placeholder="e.g. SLF - Guncam"></div>
+      <div class="field"><label>Planet name</label><input type="text" id="b_planet" placeholder="e.g. Edleri Sennu"></div>
+      <div class="field"><label>Coordinates (axes — from visor)</label><input type="text" id="b_axes" placeholder="e.g. +51.01, +84.46"></div>
+      <div class="field"><label>Portal glyphs (12 chars)</label><input type="text" id="b_glyphs" placeholder="e.g. 10B3FE16D676"></div>
+      <div class="field full-width"><label>Short description</label><input type="text" id="b_desc" placeholder="e.g. Habitation outpost on an extreme desert planet."></div>
+      <div class="field full-width"><label>Additional info</label><input type="text" id="b_info" placeholder="e.g. Built by the Space Link Federation as an outpost."></div>
+    </div>
+  </div>
+
+  <button class="btn-generate" onclick="buildOutput()">⬡ Generate Wiki Code</button>
+
+  <div class="output-section" id="output_section">
+    <h3>Generated Wiki Code</h3>
+    <div class="output-box" id="output_box"></div>
+    <button class="btn-copy" id="copy_btn" onclick="copyOutput()">Copy to clipboard</button>
+  </div>
+</div>
+
+<script>
+function g(id) { return (document.getElementById(id)?.value || '').trim(); }
+
+function buildOutput() {
+  const name   = g('b_name')   || 'SLF Base Name';
+  const system = g('b_system') || 'SLF - System Name';
+  const planet = g('b_planet') || 'Planet Name';
+  const axes   = g('b_axes')   || '+0.00, +0.00';
+  const glyphs = g('b_glyphs') || '000000000000';
+  const desc   = g('b_desc')   || 'A Space Link Federation base.';
+  const info   = g('b_info')   || 'Built by the Space Link Federation as an outpost.';
+
+  const output = `{{Version|Swarm}}
+{{Base infobox
+| name = ${name}
+| image = nmsMisc_NotAvailable.png
+| galaxy = Eissentam
+| region = Capeki Spur
+| system = ${system}
+| planet = ${planet}
+| moon =
+| axes = ${axes}
+| mode = Normal
+| platform = PS5, PC
+| civilized = Space Link Federation
+| builderlink = KING-MINION2
+| release = Swarm
+}}
+
+'''${name}''' is a player base.
+
+==Summary==
+${desc} Located on [[${planet}]] in the [[${system}]] system.
+
+==Location==
+Found on [[${planet}]] in the [[${system}]] system, [[Capeki Spur]] region, [[Eissentam]] galaxy.
+
+Coordinates: ${axes}
+
+Portal glyphs: {{Gl|${glyphs}}}
+
+==Additional Information==
+${info}
+
+==Gallery==
+<gallery>
+nmsMisc_NotAvailable.png|Caption of the image
+</gallery>`;
+
+  document.getElementById('output_box').textContent = output;
+  const sec = document.getElementById('output_section');
+  sec.classList.add('visible');
+  sec.scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyOutput() {
+  const text = document.getElementById('output_box').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy_btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy to clipboard'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>
