@@ -247,12 +247,12 @@
 
   <div class="section">
     <h3>Civilization Settings</h3>
-    <p class="note">These identify your civ on the wiki. <strong>SLF members: leave these exactly as they are.</strong> Other civs: set them once to your own values and they'll carry through every page.</p>
+    <p class="note">These identify your civ on the wiki — set them to your own values and they'll carry through every page.</p>
     <div class="field-grid">
-      <div class="field"><label>System name prefix</label><input type="text" id="prefix" value="SLF -"></div>
-      <div class="field"><label>Civilization name</label><input type="text" id="civ_name" value="Space Link Federation"></div>
-      <div class="field"><label>Galaxy</label><input type="text" id="galaxy" value="Eissentam"></div>
-      <div class="field"><label>Region</label><input type="text" id="region" value="Capeki Spur"></div>
+      <div class="field"><label>System name prefix</label><input type="text" id="prefix" placeholder="e.g. SLF -"></div>
+      <div class="field"><label>Civilization name</label><input type="text" id="civ_name" placeholder="e.g. Space Link Federation"></div>
+      <div class="field"><label>Galaxy</label><input type="text" id="galaxy" placeholder="e.g. Eissentam"></div>
+      <div class="field"><label>Region</label><input type="text" id="region" placeholder="e.g. Capeki Spur"></div>
     </div>
   </div>
 
@@ -279,7 +279,7 @@
         <select id="water"><option>No</option><option>Yes</option></select>
       </div>
       <div class="field"><label>Discovery date</label><input type="text" id="disc_date" placeholder="e.g. 3 June 2026"></div>
-      <div class="field"><label>Discoverer name</label><input type="text" id="disc_name" value="KING-MINION2"></div>
+      <div class="field"><label>Discoverer name</label><input type="text" id="disc_name" placeholder="In-Game Username"></div>
       <div class="field"><label>Number of planets</label>
         <select id="planet_count">
           <option value="1">1</option><option value="2">2</option><option value="3">3</option>
@@ -405,12 +405,12 @@ document.getElementById('star_class').addEventListener('input', function (e) {
 updatePurpleUI();
 
 function buildOutput() {
-  const prefix = g('prefix') || 'SLF -';
-  const civ = g('civ_name') || 'Space Link Federation';
-  const galaxy = g('galaxy') || 'Eissentam';
-  const region = g('region') || 'Capeki Spur';
+  const prefix = g('prefix');
+  const civ = g('civ_name');
+  const galaxy = g('galaxy');
+  const region = g('region');
   const origName = g('orig_name');
-  const slfName = origName ? `${prefix} ${origName}` : `${prefix} System Name`;
+  const slfName = [prefix, origName || 'System Name'].filter(Boolean).join(' ');
 
   // Portal glyphs only — the galactic coordinates are decoded from them automatically.
   let glyphs = g('glyphs').toUpperCase();
@@ -429,12 +429,12 @@ function buildOutput() {
   const dissonant = isPurple ? 'Yes' : '';
   const water = isPurple ? g('water') : 'No';
 
-  const summary = "'''" + slfName + "''' is a [[star system]] in the [[" + region + "]].";
+  const summary = "'''" + slfName + "''' is a [[star system]]" + (region ? " in the [[" + region + "]]" : "") + ".";
 
   const pCount = parseInt(g('planet_count') || 4);
   const mCount = parseInt(g('moon_count') || 0);
   const total = pCount + mCount;
-  const discName = g('disc_name') || 'KING-MINION2';
+  const discName = g('disc_name');
   const discDate = g('disc_date') || 'dd month yyyy';
 
   function bodyRow(i) {
@@ -554,7 +554,7 @@ ${planetRows}|}
 ${basesBlock}
 
 ==Additional Information==
-Claimed by the [[${civ}]] as part of their mission to document the known universe before the Atlas collapse.
+${civ ? `Claimed by the [[${civ}]] as part of their mission to document the known universe before the Atlas collapse.` : ''}
 
 ==Gallery==
 <gallery>

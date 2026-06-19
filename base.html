@@ -238,6 +238,17 @@
   </header>
 
   <div class="section">
+    <h3>Civilization Settings</h3>
+    <p class="note">These identify your civ on the wiki — set them to your own values and they'll carry through every page.</p>
+    <div class="field-grid">
+      <div class="field"><label>Civilization name</label><input type="text" id="civ_name" placeholder="e.g. Space Link Federation"></div>
+      <div class="field"><label>Galaxy</label><input type="text" id="galaxy" placeholder="e.g. Eissentam"></div>
+      <div class="field"><label>Region</label><input type="text" id="region" placeholder="e.g. Capeki Spur"></div>
+      <div class="field"><label>Builder name (in-game)</label><input type="text" id="builder" placeholder="e.g. KING-MINION2"></div>
+    </div>
+  </div>
+
+  <div class="section">
     <h3>Base Info</h3>
     <div class="field-grid">
       <div class="field"><label>Base name</label><input type="text" id="b_name" placeholder="e.g. SLF Desert Base"></div>
@@ -264,41 +275,49 @@
 function g(id) { return (document.getElementById(id)?.value || '').trim(); }
 
 function buildOutput() {
-  const name   = g('b_name')   || 'SLF Base Name';
-  const system = g('b_system') || 'SLF - System Name';
+  const civ    = g('civ_name');
+  const galaxy = g('galaxy');
+  const region = g('region');
+  const builder= g('builder');
+  const name   = g('b_name')   || 'Base Name';
+  const system = g('b_system') || 'System Name';
   const planet = g('b_planet') || 'Planet Name';
   const moon   = g('b_moon');
   const axes   = g('b_axes')   || '+0.00, +0.00';
   const glyphs = g('b_glyphs') || '000000000000';
-  const desc   = g('b_desc')   || 'A Space Link Federation base.';
-  const info   = g('b_info')   || 'Built by the Space Link Federation as an outpost.';
+  const desc   = g('b_desc');
+  const info   = g('b_info');
   // where the base sits — moon (noting its parent planet) if given, else the planet
   const locBody = moon ? `[[${moon}]] (a moon of [[${planet}]])` : `[[${planet}]]`;
+  // region/galaxy trailer for the Location line — only the parts that are filled in
+  const locTrailer = [region ? `[[${region}]] region` : '', galaxy ? `[[${galaxy}]] galaxy` : ''].filter(Boolean).join(', ');
+  const summaryLine = [desc, `Located on ${locBody} in the [[${system}]] system.`].filter(Boolean).join(' ');
+  const locationLine = `Found on ${locBody} in the [[${system}]] system${locTrailer ? ', ' + locTrailer : ''}.`;
 
   const output = `{{Version|Swarm}}
 {{Base infobox
 | name = ${name}
 | image = nmsMisc_NotAvailable.png
-| galaxy = Eissentam
-| region = Capeki Spur
+| galaxy = ${galaxy}
+| region = ${region}
 | system = ${system}
 | planet = ${planet}
 | moon = ${moon}
 | axes = ${axes}
 | mode = Normal
 | platform = PS5, PC
-| civilized = Space Link Federation
-| builderlink = KING-MINION2
+| civilized = ${civ}
+| builderlink = ${builder}
 | release = Swarm
 }}
 
 '''${name}''' is a player base.
 
 ==Summary==
-${desc} Located on ${locBody} in the [[${system}]] system.
+${summaryLine}
 
 ==Location==
-Found on ${locBody} in the [[${system}]] system, [[Capeki Spur]] region, [[Eissentam]] galaxy.
+${locationLine}
 
 Coordinates: ${axes}
 
