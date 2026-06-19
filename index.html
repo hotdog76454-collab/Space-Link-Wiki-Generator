@@ -399,8 +399,11 @@ document.getElementById('star_color').addEventListener('change', updatePurpleUI)
 /* ---- auto-fill star colour from class ---- */
 const CLASS_COLOUR = {F:'Yellow',G:'Yellow',K:'Red',M:'Red',E:'Green',B:'Blue',O:'Blue',X:'Purple',Y:'Purple'};
 document.getElementById('star_class').addEventListener('input', function (e) {
-  const col = CLASS_COLOUR[(e.target.value.trim()[0] || '').toUpperCase()];
-  if (col) { document.getElementById('star_color').value = col; updatePurpleUI(); }
+  const v = e.target.value.trim();
+  const col = CLASS_COLOUR[(v[0] || '').toUpperCase()];
+  if (col) document.getElementById('star_color').value = col;
+  else if (!v) document.getElementById('star_color').value = 'Yellow'; // class cleared -> back to default
+  updatePurpleUI();
 });
 updatePurpleUI();
 
