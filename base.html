@@ -20,8 +20,9 @@
       --line:#1B3052; --line-soft:#12233a;
       --blue:#2D7BFF; --blue-deep:#0b347f;
       --visor:#45E6DE; --visor-dim:#1f8c89;
-      --hazard:#FF7A3C;
+      --hazard:#FF7A3C; --dissonant:#BF7BFF;
       --text:#D2E2F6; --dim:#5E7CA3; --faint:#39537b;
+      --note:#A6C0E0; --hint:#8AA6CC;
       --mint:#5BE6B0;
       --input:#0A1422;
       --f-display:'NMSGeoSans','Orbitron',sans-serif;
@@ -73,9 +74,8 @@
       color:var(--text); line-height:1; text-shadow:0 0 26px #45e6de33;
     }
     header h1 .hex { color:var(--blue); }
-    .subtitle { margin-top:.7rem; color:var(--dim); font-size:.8rem; letter-spacing:.05em; }
     .scanline {
-      height:1px; margin:1.5rem auto 0; max-width:520px;
+      height:1px; margin:1.4rem auto 0; max-width:520px;
       background:linear-gradient(90deg, transparent, var(--line) 12%, var(--visor-dim) 50%, var(--line) 88%, transparent);
     }
     .nav-chip {
@@ -103,7 +103,10 @@
       font-family:var(--f-display); text-transform:uppercase; letter-spacing:.24em;
       font-size:.82rem; color:var(--visor);
     }
-    .resolver-head .sub { font-size:.72rem; color:var(--dim); letter-spacing:.05em; }
+    .resolver-head .sub { font-size:.72rem; color:var(--hint); letter-spacing:.05em; }
+
+    .resolver-body { display:grid; grid-template-columns:1fr 232px; gap:1.4rem; align-items:start; }
+    .decoder { min-width:0; }
 
     .glyph-input {
       width:100%; background:var(--input); border:1px solid var(--line); border-radius:4px;
@@ -136,6 +139,32 @@
     .glyph-cell.filled.noimg .glyph-hex { display:block; }
     .glyph-cell.filled .idx { color:var(--visor-dim); }
 
+    /* ---- Glyph dial pad (click to enter glyphs) ---- */
+    .dial { display:flex; flex-direction:column; gap:.7rem; }
+    .dial-label {
+      font-family:var(--f-display); text-transform:uppercase; letter-spacing:.18em;
+      font-size:.66rem; color:var(--visor); display:flex; align-items:center; gap:.5em;
+    }
+    .dial-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+    .dial-key {
+      aspect-ratio:1; background:var(--input); border:1px solid var(--line); border-radius:4px;
+      cursor:pointer; position:relative; display:flex; align-items:center; justify-content:center;
+      transition:border-color .15s, box-shadow .15s, background .15s, transform .1s;
+    }
+    .dial-key:hover { border-color:var(--visor); background:#0c1d33; box-shadow:0 0 12px #45e6de44; }
+    .dial-key:active { transform:translateY(1px); }
+    .dial-key img { width:68%; height:68%; object-fit:contain; filter:drop-shadow(0 0 3px #45e6de88); }
+    .dial-key .kh { position:absolute; bottom:2px; right:4px; font-family:var(--f-mono); font-size:.5rem; color:var(--faint); }
+    .dial-key.noimg img { display:none; }
+    .dial-key.noimg .kh { position:static; font-size:1.05rem; color:var(--visor); }
+    .dial-actions { display:flex; gap:6px; }
+    .dial-btn {
+      flex:1; background:transparent; border:1px solid var(--line); color:var(--hint);
+      font-family:var(--f-display); text-transform:uppercase; letter-spacing:.1em; font-size:.6rem;
+      padding:8px 6px; border-radius:4px; cursor:pointer; transition:border-color .15s, color .15s;
+    }
+    .dial-btn:hover { border-color:var(--visor-dim); color:var(--text); }
+
     .coord-readout {
       display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
       background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden;
@@ -145,7 +174,7 @@
     .coord-cell .v { font-family:var(--f-mono); font-size:1.15rem; color:var(--text); margin-top:.25rem; letter-spacing:.04em; }
     .coord-readout.resolved .coord-cell .v { color:var(--visor); text-shadow:0 0 14px #45e6de55; }
     .resolver-status {
-      margin-top:.85rem; font-size:.74rem; letter-spacing:.05em; color:var(--dim);
+      margin-top:.85rem; font-size:.74rem; letter-spacing:.05em; color:var(--hint);
       display:flex; align-items:center; gap:.5em;
     }
     .resolver-status::before { content:'◆'; font-size:.6rem; color:var(--visor-dim); }
@@ -187,8 +216,8 @@
     .field select option { background:var(--panel-soft); }
     .field input::placeholder { color:var(--faint); }
     .full-width { grid-column:1/-1; }
-    .hint { font-size:.68rem; color:var(--faint); letter-spacing:.03em; line-height:1.4; }
-    .note { font-size:.74rem; color:var(--dim); margin-bottom:13px; line-height:1.5; }
+    .hint { font-size:.68rem; color:var(--hint); letter-spacing:.03em; line-height:1.4; }
+    .note { font-size:.74rem; color:var(--note); margin-bottom:13px; line-height:1.5; }
 
     /* ---- Generate + output ---- */
     .btn-generate {
@@ -223,6 +252,7 @@
     .btn-copy:hover { background:#45e6de1a; }
     .btn-copy.copied { color:var(--mint); border-color:var(--mint); }
 
+    @media (max-width:760px) { .resolver-body { grid-template-columns:1fr; } }
     @media (max-width:560px) {
       .glyph-strip { grid-template-columns:repeat(6,1fr); }
       .coord-readout { grid-template-columns:repeat(2,1fr); }
@@ -237,7 +267,6 @@
   <header>
     <div class="eyebrow">Planetary Construction Log</div>
     <h1>Space Link <span class="hex">Base</span> Creator</h1>
-    <p class="subtitle">Log a player base to the galactic record.</p>
     <div class="scanline"></div>
     <a class="nav-chip" href="index.html">Space Link System Atlas →</a>
   </header>
@@ -246,18 +275,30 @@
   <div class="resolver hud"><span class="corners"></span>
     <div class="resolver-head">
       <span class="title">⬡ System Address</span>
-      <span class="sub">The portal glyphs of the base's system</span>
+      <span class="sub">Click glyphs to dial, or type the address</span>
     </div>
-    <input type="text" id="b_glyphs" class="glyph-input" maxlength="12" autocomplete="off" spellcheck="false"
-           placeholder="DIAL 12 GLYPHS · e.g. 10B3FE16D676">
-    <div class="glyph-strip" id="glyph_strip"></div>
-    <div class="coord-readout" id="coord_readout">
-      <div class="coord-cell"><div class="k">X</div><div class="v" id="cx">––––</div></div>
-      <div class="coord-cell"><div class="k">Y</div><div class="v" id="cy">––––</div></div>
-      <div class="coord-cell"><div class="k">Z</div><div class="v" id="cz">––––</div></div>
-      <div class="coord-cell"><div class="k">System</div><div class="v" id="cs">––––</div></div>
+    <div class="resolver-body">
+      <div class="decoder">
+        <input type="text" id="b_glyphs" class="glyph-input" maxlength="12" autocomplete="off" spellcheck="false"
+               placeholder="DIAL 12 GLYPHS · e.g. 10B3FE16D676">
+        <div class="glyph-strip" id="glyph_strip"></div>
+        <div class="coord-readout" id="coord_readout">
+          <div class="coord-cell"><div class="k">X</div><div class="v" id="cx">––––</div></div>
+          <div class="coord-cell"><div class="k">Y</div><div class="v" id="cy">––––</div></div>
+          <div class="coord-cell"><div class="k">Z</div><div class="v" id="cz">––––</div></div>
+          <div class="coord-cell"><div class="k">System</div><div class="v" id="cs">––––</div></div>
+        </div>
+        <div class="resolver-status" id="resolver_status">Optional — dial or type the system glyphs to confirm the location.</div>
+      </div>
+      <div class="dial">
+        <div class="dial-label">⬡ Glyph Dial</div>
+        <div class="dial-grid" id="dial_grid"></div>
+        <div class="dial-actions">
+          <button type="button" class="dial-btn" id="dial_back">⌫ Back</button>
+          <button type="button" class="dial-btn" id="dial_clear">Clear</button>
+        </div>
+      </div>
     </div>
-    <div class="resolver-status" id="resolver_status">Optional — enter the system glyphs to confirm the location.</div>
   </div>
 
   <div class="panel">
@@ -365,12 +406,37 @@ function updateResolver() {
     readout.classList.remove('resolved');
     status.className = 'resolver-status';
     status.textContent = s.length === 0
-      ? 'Optional — enter the system glyphs to confirm the location.'
+      ? 'Optional — dial or type the system glyphs to confirm the location.'
       : `Address incomplete — ${s.length} of 12 glyphs entered.`;
   }
 }
 document.getElementById('b_glyphs').addEventListener('input', updateResolver);
 updateResolver();
+
+/* ---- Glyph dial pad (click to enter glyphs) ---- */
+function buildGlyphPad() {
+  const HEX = '0123456789ABCDEF';
+  let html = '';
+  for (const ch of HEX) {
+    html += `<button type="button" class="dial-key" data-hex="${ch}" title="Glyph ${ch}">
+      <img src="${GLYPH_BASE}${ch.toLowerCase()}.png" alt="${ch}" onerror="this.closest('.dial-key').classList.add('noimg')">
+      <span class="kh">${ch}</span></button>`;
+  }
+  document.getElementById('dial_grid').innerHTML = html;
+  document.querySelectorAll('.dial-key').forEach(k => k.addEventListener('click', () => {
+    const inp = document.getElementById('b_glyphs');
+    if (inp.value.length >= 12) return;
+    inp.value = inp.value + k.dataset.hex;
+    updateResolver();
+  }));
+}
+buildGlyphPad();
+document.getElementById('dial_back').addEventListener('click', () => {
+  const inp = document.getElementById('b_glyphs'); inp.value = inp.value.slice(0, -1); updateResolver();
+});
+document.getElementById('dial_clear').addEventListener('click', () => {
+  document.getElementById('b_glyphs').value = ''; updateResolver();
+});
 
 /* ---- Build the base page (admin-approved format — do not reorder fields) ---- */
 function buildOutput() {
