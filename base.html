@@ -7,239 +7,262 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Share+Tech+Mono&display=swap');
 
-    :root {
-      --bg: #080c14;
-      --bg2: #0d1421;
-      --bg3: #111c2e;
-      --border: #1e3a5f;
-      --accent: #1a6bff;
-      --accent2: #00cfff;
-      --text: #c8ddf5;
-      --text-dim: #5a7fa8;
-      --input-bg: #0a1220;
-      --green: #00ff99;
+    /* Authentic NMS in-game menu typeface (NMSCD community webfont) */
+    @font-face {
+      font-family: 'NMSGeoSans';
+      src: url('https://font.nmscd.com/assets/font/NMSGeoSans_Kerned/Web-TT/NMSGeoSans_Kerned.woff') format('woff');
+      font-weight: 300 700;
+      font-display: swap;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --void:#06090F; --void2:#090E16; --panel:#0D1623; --panel-soft:#101D30;
+      --line:#1B3052; --line-soft:#12233a;
+      --blue:#2D7BFF; --blue-deep:#0b347f;
+      --visor:#45E6DE; --visor-dim:#1f8c89;
+      --hazard:#FF7A3C;
+      --text:#D2E2F6; --dim:#5E7CA3; --faint:#39537b;
+      --mint:#5BE6B0;
+      --input:#0A1422;
+      --f-display:'NMSGeoSans','Orbitron',sans-serif;
+      --f-mono:'Share Tech Mono',monospace;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Share Tech Mono', monospace;
-      min-height: 100vh;
-      padding: 2rem 1rem;
+      background:var(--void);
+      color:var(--text);
+      font-family:var(--f-mono);
+      min-height:100vh;
+      padding:2.5rem 1rem 4rem;
+      -webkit-font-smoothing:antialiased;
     }
 
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse at 20% 50%, #0a1a3a44 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 20%, #001a3344 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
+      content:'';
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse at 18% 12%, #11366a33 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 80%, #0a2a4d2e 0%, transparent 50%),
+        radial-gradient(circle at 50% -10%, #1a4fa81f 0%, transparent 45%);
     }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
+    .container { max-width:940px; margin:0 auto; position:relative; z-index:1; }
 
-    header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
+    /* ---- HUD corner-bracket frame (signature emphasis) ---- */
+    .hud { position:relative; }
+    .hud::before, .hud::after,
+    .hud > .corners::before, .hud > .corners::after {
+      content:''; position:absolute; width:16px; height:16px; pointer-events:none;
     }
+    .hud::before { top:-1px; left:-1px; border-top:1.5px solid var(--visor); border-left:1.5px solid var(--visor); }
+    .hud::after  { bottom:-1px; right:-1px; border-bottom:1.5px solid var(--visor); border-right:1.5px solid var(--visor); }
+    .hud > .corners::before { top:-1px; right:-1px; border-top:1.5px solid var(--visor); border-right:1.5px solid var(--visor); }
+    .hud > .corners::after  { bottom:-1px; left:-1px; border-bottom:1.5px solid var(--visor); border-left:1.5px solid var(--visor); }
 
+    /* ---- Header ---- */
+    header { text-align:center; margin-bottom:2.25rem; }
+    .eyebrow {
+      font-family:var(--f-display); font-size:.66rem; letter-spacing:.42em;
+      text-transform:uppercase; color:var(--visor-dim); margin-bottom:.7rem; padding-left:.42em;
+    }
     header h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.2rem, 4vw, 1.8rem);
-      font-weight: 700;
-      color: var(--accent2);
-      letter-spacing: 0.1em;
-      text-shadow: 0 0 20px #00cfff55;
+      font-family:var(--f-display); font-weight:700;
+      font-size:clamp(1.5rem,5vw,2.5rem); letter-spacing:.16em; text-transform:uppercase;
+      color:var(--text); line-height:1; text-shadow:0 0 26px #45e6de33;
     }
-
-    header p {
-      margin-top: 0.5rem;
-      color: var(--text-dim);
-      font-size: 0.85rem;
+    header h1 .hex { color:var(--blue); }
+    .subtitle { margin-top:.7rem; color:var(--dim); font-size:.8rem; letter-spacing:.05em; }
+    .scanline {
+      height:1px; margin:1.5rem auto 0; max-width:520px;
+      background:linear-gradient(90deg, transparent, var(--line) 12%, var(--visor-dim) 50%, var(--line) 88%, transparent);
     }
-
-    .nav-link {
-      display: inline-block;
-      margin-top: 0.8rem;
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 0.8rem;
-      border: 1px solid var(--border);
-      padding: 5px 14px;
-      border-radius: 4px;
-      transition: background 0.2s, box-shadow 0.2s;
+    .nav-chip {
+      display:inline-flex; align-items:center; gap:.5em; margin-top:1.4rem;
+      font-family:var(--f-display); text-transform:uppercase; letter-spacing:.16em; font-size:.7rem;
+      color:var(--blue); text-decoration:none; border:1px solid var(--line);
+      padding:8px 16px; border-radius:3px; transition:border-color .2s, box-shadow .2s, color .2s;
     }
+    .nav-chip:hover { border-color:var(--blue); color:var(--text); box-shadow:0 0 16px #2d7bff44; }
 
-    .nav-link:hover { background: #1a6bff22; box-shadow: 0 0 12px #1a6bff44; }
-
-    .section {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.25rem;
-      position: relative;
+    /* ---- Portal Address Resolver (the signature) ---- */
+    .resolver {
+      background:linear-gradient(180deg, #0b1626, #081020);
+      border:1px solid var(--line);
+      border-radius:6px;
+      padding:1.6rem 1.5rem 1.4rem;
+      margin-bottom:1.6rem;
+      box-shadow:0 0 40px #04070d80, inset 0 0 60px #0a1c3433;
     }
-
-    .section::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 3px; height: 100%;
-      background: linear-gradient(to bottom, var(--accent), var(--accent2));
-      border-radius: 6px 0 0 6px;
+    .resolver-head {
+      display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:.5rem;
+      margin-bottom:1.1rem;
     }
-
-    .section h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--accent2);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
+    .resolver-head .title {
+      font-family:var(--f-display); text-transform:uppercase; letter-spacing:.24em;
+      font-size:.82rem; color:var(--visor);
     }
+    .resolver-head .sub { font-size:.72rem; color:var(--dim); letter-spacing:.05em; }
 
-    .field-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
+    .glyph-input {
+      width:100%; background:var(--input); border:1px solid var(--line); border-radius:4px;
+      color:var(--text); font-family:var(--f-mono); font-size:1.05rem; letter-spacing:.5em;
+      text-transform:uppercase; padding:11px 14px; text-align:center; margin-bottom:1.1rem;
+      transition:border-color .2s, box-shadow .2s;
     }
+    .glyph-input:focus { outline:none; border-color:var(--visor); box-shadow:0 0 0 1px var(--visor), 0 0 22px #45e6de33; }
+    .glyph-input::placeholder { color:var(--faint); letter-spacing:.3em; }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+    .glyph-strip { display:grid; grid-template-columns:repeat(12,1fr); gap:7px; margin-bottom:1.2rem; }
+    .glyph-cell {
+      aspect-ratio:1/1.12; background:var(--line-soft); padding:1px;
+      clip-path:polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+      transition:background .25s, transform .25s;
     }
+    .glyph-inner {
+      width:100%; height:100%; background:var(--void2);
+      clip-path:polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+      display:flex; align-items:center; justify-content:center; position:relative;
+    }
+    .glyph-inner .idx { position:absolute; bottom:2px; right:4px; font-size:.5rem; color:var(--faint); }
+    .glyph-cell.filled { background:var(--visor); transform:translateY(-1px); }
+    .glyph-cell.filled .glyph-inner { box-shadow:inset 0 0 14px #45e6de2e; }
+    .glyph-sym { width:74%; height:74%; object-fit:contain; display:none;
+      filter:drop-shadow(0 0 4px #45e6deaa); }
+    .glyph-cell.filled .glyph-sym { display:block; }
+    .glyph-hex { display:none; font-family:var(--f-mono); font-size:.95rem; color:var(--visor); }
+    .glyph-cell.filled.noimg .glyph-sym { display:none; }
+    .glyph-cell.filled.noimg .glyph-hex { display:block; }
+    .glyph-cell.filled .idx { color:var(--visor-dim); }
 
+    .coord-readout {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+      background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden;
+    }
+    .coord-cell { background:var(--void2); padding:.7rem .4rem; text-align:center; }
+    .coord-cell .k { font-family:var(--f-display); font-size:.58rem; letter-spacing:.2em; color:var(--dim); text-transform:uppercase; }
+    .coord-cell .v { font-family:var(--f-mono); font-size:1.15rem; color:var(--text); margin-top:.25rem; letter-spacing:.04em; }
+    .coord-readout.resolved .coord-cell .v { color:var(--visor); text-shadow:0 0 14px #45e6de55; }
+    .resolver-status {
+      margin-top:.85rem; font-size:.74rem; letter-spacing:.05em; color:var(--dim);
+      display:flex; align-items:center; gap:.5em;
+    }
+    .resolver-status::before { content:'◆'; font-size:.6rem; color:var(--visor-dim); }
+    .resolver-status.ok { color:var(--visor); }
+    .resolver-status.ok::before { color:var(--visor); }
+    .resolver-status.err { color:var(--hazard); }
+    .resolver-status.err::before { content:'⚠'; color:var(--hazard); }
+
+    /* ---- Panels ---- */
+    .panel {
+      background:var(--panel); border:1px solid var(--line-soft);
+      border-radius:6px; padding:1.3rem 1.5rem; margin-bottom:1.15rem; position:relative;
+    }
+    .panel::before {
+      content:''; position:absolute; top:-1px; left:-1px; width:14px; height:14px;
+      border-top:1.5px solid var(--blue); border-left:1.5px solid var(--blue); pointer-events:none;
+    }
+    .panel h2 {
+      font-family:var(--f-display); font-size:.74rem; font-weight:600; letter-spacing:.22em;
+      text-transform:uppercase; color:var(--visor); margin-bottom:1.1rem;
+      display:flex; align-items:center; gap:.6em;
+    }
+    .panel h2::before { content:'⬡'; color:var(--blue); font-size:.85rem; }
+
+    .field-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(205px,1fr)); gap:13px; }
+    .field { display:flex; flex-direction:column; gap:5px; }
     .field label {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      font-family:var(--f-display); font-size:.66rem; letter-spacing:.12em;
+      text-transform:uppercase; color:var(--dim);
     }
-
-    .field input,
-    .field select {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.85rem;
-      padding: 7px 10px;
-      width: 100%;
-      transition: border-color 0.2s;
+    .field input, .field select {
+      background:var(--input); border:1px solid var(--line); border-radius:4px; color:var(--text);
+      font-family:var(--f-mono); font-size:.86rem; padding:8px 10px; width:100%;
+      transition:border-color .2s, box-shadow .2s;
     }
-
-    .field input:focus,
-    .field select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px #1a6bff22;
+    .field input:focus, .field select:focus {
+      outline:none; border-color:var(--blue); box-shadow:0 0 0 1px var(--blue), 0 0 14px #2d7bff2e;
     }
+    .field select option { background:var(--panel-soft); }
+    .field input::placeholder { color:var(--faint); }
+    .full-width { grid-column:1/-1; }
+    .hint { font-size:.68rem; color:var(--faint); letter-spacing:.03em; line-height:1.4; }
+    .note { font-size:.74rem; color:var(--dim); margin-bottom:13px; line-height:1.5; }
 
-    .field select option { background: var(--bg3); }
-
-    .full-width { grid-column: 1 / -1; }
-
-    .note {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      margin-bottom: 12px;
-    }
-
+    /* ---- Generate + output ---- */
     .btn-generate {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--accent), #0044cc);
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      cursor: pointer;
-      margin-top: 1.5rem;
-      transition: opacity 0.2s, box-shadow 0.2s;
-      text-transform: uppercase;
+      display:block; width:100%; padding:15px; margin-top:1.6rem;
+      background:linear-gradient(135deg, var(--blue), var(--blue-deep));
+      border:none; border-radius:5px; color:#fff; cursor:pointer;
+      font-family:var(--f-display); font-size:.82rem; font-weight:600;
+      letter-spacing:.2em; text-transform:uppercase;
+      transition:box-shadow .2s, transform .1s;
     }
+    .btn-generate:hover { box-shadow:0 0 26px #2d7bff66; }
+    .btn-generate:active { transform:translateY(1px); }
 
-    .btn-generate:hover {
-      opacity: 0.9;
-      box-shadow: 0 0 20px #1a6bff55;
+    .output-section { display:none; margin-top:1.6rem; }
+    .output-section.visible { display:block; }
+    .output-head {
+      display:flex; align-items:center; gap:.6em; margin-bottom:.8rem;
+      font-family:var(--f-display); font-size:.74rem; letter-spacing:.22em;
+      text-transform:uppercase; color:var(--mint);
     }
-
-    .output-section {
-      display: none;
-      margin-top: 1.5rem;
-    }
-
-    .output-section.visible { display: block; }
-
-    .output-section h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.75rem;
-      color: var(--accent2);
-      letter-spacing: 0.15em;
-      margin-bottom: 0.75rem;
-    }
-
+    .output-head::before { content:'⬢'; color:var(--mint); }
     .output-box {
-      background: #040810;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1rem;
-      font-size: 0.78rem;
-      line-height: 1.6;
-      white-space: pre;
-      overflow-x: auto;
-      color: var(--green);
-      max-height: 500px;
-      overflow-y: auto;
+      background:#04070d; border:1px solid var(--line); border-radius:6px; padding:1.1rem;
+      font-family:var(--f-mono); font-size:.78rem; line-height:1.62; white-space:pre;
+      overflow:auto; color:var(--mint); max-height:520px;
     }
-
     .btn-copy {
-      margin-top: 0.75rem;
-      padding: 8px 20px;
-      background: transparent;
-      border: 1px solid var(--accent2);
-      border-radius: 4px;
-      color: var(--accent2);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: background 0.2s;
+      margin-top:.8rem; padding:9px 22px; background:transparent; border:1px solid var(--visor);
+      border-radius:4px; color:var(--visor); font-family:var(--f-display); letter-spacing:.14em;
+      text-transform:uppercase; font-size:.72rem; cursor:pointer; transition:background .2s;
     }
+    .btn-copy:hover { background:#45e6de1a; }
+    .btn-copy.copied { color:var(--mint); border-color:var(--mint); }
 
-    .btn-copy:hover { background: #00cfff22; }
-    .btn-copy.copied { color: var(--green); border-color: var(--green); }
+    @media (max-width:560px) {
+      .glyph-strip { grid-template-columns:repeat(6,1fr); }
+      .coord-readout { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition:none !important; animation:none !important; }
+    }
   </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>⬡ Space Link Base Creator</h1>
-    <p>NMS Wiki Base Page Code Generator</p>
-    <a class="nav-link" href="index.html">⬡ Space Link System Atlas →</a>
+    <div class="eyebrow">Planetary Construction Log</div>
+    <h1>Space Link <span class="hex">Base</span> Creator</h1>
+    <p class="subtitle">Log a player base to the galactic record.</p>
+    <div class="scanline"></div>
+    <a class="nav-chip" href="index.html">Space Link System Atlas →</a>
   </header>
 
-  <div class="section">
-    <h3>Civilization Settings</h3>
-    <p class="note">These identify your civ on the wiki — set them to your own values and they'll carry through every page.</p>
+  <!-- SIGNATURE: Portal Address Resolver (the base's home system) -->
+  <div class="resolver hud"><span class="corners"></span>
+    <div class="resolver-head">
+      <span class="title">⬡ System Address</span>
+      <span class="sub">The portal glyphs of the base's system</span>
+    </div>
+    <input type="text" id="b_glyphs" class="glyph-input" maxlength="12" autocomplete="off" spellcheck="false"
+           placeholder="DIAL 12 GLYPHS · e.g. 10B3FE16D676">
+    <div class="glyph-strip" id="glyph_strip"></div>
+    <div class="coord-readout" id="coord_readout">
+      <div class="coord-cell"><div class="k">X</div><div class="v" id="cx">––––</div></div>
+      <div class="coord-cell"><div class="k">Y</div><div class="v" id="cy">––––</div></div>
+      <div class="coord-cell"><div class="k">Z</div><div class="v" id="cz">––––</div></div>
+      <div class="coord-cell"><div class="k">System</div><div class="v" id="cs">––––</div></div>
+    </div>
+    <div class="resolver-status" id="resolver_status">Optional — enter the system glyphs to confirm the location.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Identification</h2>
+    <p class="note">These name your civ on the wiki. Set them once and they carry through every page.</p>
     <div class="field-grid">
       <div class="field"><label>Civilization name</label><input type="text" id="civ_name" placeholder="e.g. Space Link Federation"></div>
       <div class="field"><label>Galaxy</label><input type="text" id="galaxy" placeholder="e.g. Eissentam"></div>
@@ -248,32 +271,108 @@
     </div>
   </div>
 
-  <div class="section">
-    <h3>Base Info</h3>
+  <div class="panel">
+    <h2>Base Data</h2>
     <div class="field-grid">
       <div class="field"><label>Base name</label><input type="text" id="b_name" placeholder="e.g. SLF Desert Base"></div>
       <div class="field"><label>System name</label><input type="text" id="b_system" placeholder="e.g. SLF - Guncam"></div>
       <div class="field"><label>Planet name</label><input type="text" id="b_planet" placeholder="e.g. Edleri Sennu"></div>
       <div class="field"><label>Moon (only if base is on a moon)</label><input type="text" id="b_moon" placeholder="e.g. moon name"></div>
-      <div class="field"><label>Coordinates (axes — from visor)</label><input type="text" id="b_axes" placeholder="e.g. +51.01, +84.46"></div>
-      <div class="field"><label>Portal glyphs (12 chars)</label><input type="text" id="b_glyphs" placeholder="e.g. 10B3FE16D676"></div>
+      <div class="field full-width"><label>Coordinates (axes — from the analysis visor)</label><input type="text" id="b_axes" placeholder="e.g. +51.01, +84.46"></div>
       <div class="field full-width"><label>Short description</label><input type="text" id="b_desc" placeholder="e.g. Habitation outpost on an extreme desert planet."></div>
       <div class="field full-width"><label>Additional info</label><input type="text" id="b_info" placeholder="e.g. Built by the Space Link Federation as an outpost."></div>
     </div>
   </div>
 
-  <button class="btn-generate" onclick="buildOutput()">⬡ Generate Wiki Code</button>
+  <button class="btn-generate" onclick="buildOutput()">Generate wiki code</button>
 
   <div class="output-section" id="output_section">
-    <h3>Generated Wiki Code</h3>
+    <div class="output-head">Base record entry</div>
     <div class="output-box" id="output_box"></div>
-    <button class="btn-copy" id="copy_btn" onclick="copyOutput()">Copy to clipboard</button>
+    <button class="btn-copy" id="copy_btn" onclick="copyOutput()">Copy code</button>
   </div>
 </div>
 
 <script>
+const GLYPH_BASE = 'https://cdn.jsdelivr.net/gh/nmsportals/nmsportals.github.io@master/img/glyphs/';
+
 function g(id) { return (document.getElementById(id)?.value || '').trim(); }
 
+/* ---- glyphs -> coordinates (verified against SLF - Ganggya-Opiu) ---- */
+const RE12 = /^[0-9A-F]{12}$/;
+const hx = (n, w) => ((n & ((1 << (4 * w)) - 1)) >>> 0).toString(16).toUpperCase().padStart(w, '0');
+function glyphsToCoords(glyphs) {
+  const s = glyphs.trim().toUpperCase();
+  if (!RE12.test(s)) throw new Error('Glyphs must be exactly 12 hex digits, e.g. 10B3FE16D676');
+  const sss = s.slice(1,4), yy = s.slice(4,6), zzz = s.slice(6,9), xxx = s.slice(9,12);
+  const Xg = (parseInt(xxx,16) + 0x7FF) & 0xFFF;
+  const Yg = (parseInt(yy,16) - 0x81) & 0xFF;
+  const Zg = (parseInt(zzz,16) + 0x7FF) & 0xFFF;
+  const SSSS = parseInt('0' + sss, 16);
+  return hx(Xg,4) + ':' + hx(Yg,4) + ':' + hx(Zg,4) + ':' + hx(SSSS,4);
+}
+
+/* ---- Portal Address Resolver (signature) ---- */
+function buildGlyphStrip() {
+  let html = '';
+  for (let i = 0; i < 12; i++) {
+    html += `<div class="glyph-cell"><div class="glyph-inner">
+      <img class="glyph-sym" alt=""><span class="glyph-hex"></span><span class="idx">${i + 1}</span>
+    </div></div>`;
+  }
+  document.getElementById('glyph_strip').innerHTML = html;
+}
+buildGlyphStrip();
+
+function updateResolver() {
+  const input = document.getElementById('b_glyphs');
+  let s = input.value.toUpperCase().replace(/[^0-9A-F]/g, '').slice(0, 12);
+  if (s !== input.value) input.value = s;
+
+  const cells = document.querySelectorAll('#glyph_strip .glyph-cell');
+  cells.forEach((cell, i) => {
+    const ch = s[i];
+    const img = cell.querySelector('.glyph-sym');
+    const hexEl = cell.querySelector('.glyph-hex');
+    if (ch) {
+      cell.classList.add('filled'); cell.classList.remove('noimg');
+      hexEl.textContent = ch;
+      img.onerror = () => cell.classList.add('noimg');   // fall back to the hex numeral
+      img.src = GLYPH_BASE + ch.toLowerCase() + '.png';
+    } else {
+      cell.classList.remove('filled', 'noimg');
+      hexEl.textContent = ''; img.removeAttribute('src');
+    }
+  });
+
+  const readout = document.getElementById('coord_readout');
+  const status = document.getElementById('resolver_status');
+  const setCoords = (x, y, z, sys) => {
+    document.getElementById('cx').textContent = x;
+    document.getElementById('cy').textContent = y;
+    document.getElementById('cz').textContent = z;
+    document.getElementById('cs').textContent = sys;
+  };
+
+  if (s.length === 12) {
+    const [x, y, z, sys] = glyphsToCoords(s).split(':');
+    setCoords(x, y, z, sys);
+    readout.classList.add('resolved');
+    status.className = 'resolver-status ok';
+    status.textContent = 'Address resolved — galactic coordinates locked.';
+  } else {
+    setCoords('––––', '––––', '––––', '––––');
+    readout.classList.remove('resolved');
+    status.className = 'resolver-status';
+    status.textContent = s.length === 0
+      ? 'Optional — enter the system glyphs to confirm the location.'
+      : `Address incomplete — ${s.length} of 12 glyphs entered.`;
+  }
+}
+document.getElementById('b_glyphs').addEventListener('input', updateResolver);
+updateResolver();
+
+/* ---- Build the base page (admin-approved format — do not reorder fields) ---- */
 function buildOutput() {
   const civ    = g('civ_name');
   const galaxy = g('galaxy');
@@ -284,7 +383,18 @@ function buildOutput() {
   const planet = g('b_planet') || 'Planet Name';
   const moon   = g('b_moon');
   const axes   = g('b_axes')   || '+0.00, +0.00';
-  const glyphs = g('b_glyphs') || '000000000000';
+
+  // glyphs are optional here, but if started they must be a full 12-glyph address
+  let glyphsRaw = g('b_glyphs');
+  if (glyphsRaw && glyphsRaw.length !== 12) {
+    const status = document.getElementById('resolver_status');
+    status.className = 'resolver-status err';
+    status.textContent = 'Finish the address (12 glyphs) or clear it to leave the location blank.';
+    document.querySelector('.resolver').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('b_glyphs').focus();
+    return;
+  }
+  const glyphs = glyphsRaw || '000000000000';
   const desc   = g('b_desc');
   const info   = g('b_info');
   // where the base sits — moon (noting its parent planet) if given, else the planet
@@ -342,9 +452,9 @@ function copyOutput() {
   const text = document.getElementById('output_box').textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copy_btn');
-    btn.textContent = '✓ Copied!';
+    btn.textContent = '✓ Copied';
     btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy to clipboard'; btn.classList.remove('copied'); }, 2000);
+    setTimeout(() => { btn.textContent = 'Copy code'; btn.classList.remove('copied'); }, 2000);
   });
 }
 </script>
