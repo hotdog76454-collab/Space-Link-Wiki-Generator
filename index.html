@@ -128,7 +128,7 @@
       clip-path:polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
       display:flex; align-items:center; justify-content:center; position:relative;
     }
-    .glyph-inner .idx { position:absolute; bottom:2px; right:4px; font-size:.5rem; color:var(--faint); }
+    .glyph-inner .idx { display:none; }
     .glyph-cell.filled { background:var(--visor); transform:translateY(-1px); }
     .glyph-cell.filled .glyph-inner { box-shadow:inset 0 0 14px #45e6de2e; }
     .glyph-sym { width:74%; height:74%; object-fit:contain; display:none;
@@ -154,9 +154,9 @@
     .dial-key:hover { border-color:var(--visor); background:#0c1d33; box-shadow:0 0 12px #45e6de44; }
     .dial-key:active { transform:translateY(1px); }
     .dial-key img { width:68%; height:68%; object-fit:contain; filter:drop-shadow(0 0 3px #45e6de88); }
-    .dial-key .kh { position:absolute; bottom:2px; right:4px; font-family:var(--f-mono); font-size:.5rem; color:var(--faint); }
+    .dial-key .kh { display:none; }
     .dial-key.noimg img { display:none; }
-    .dial-key.noimg .kh { position:static; font-size:1.05rem; color:var(--visor); }
+    .dial-key.noimg .kh { display:block; font-family:var(--f-mono); font-size:1.05rem; color:var(--visor); }
     .dial-actions { display:flex; gap:6px; }
     .dial-btn {
       flex:1; background:transparent; border:1px solid var(--line); color:var(--hint);
