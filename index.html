@@ -213,15 +213,44 @@
     .hint { font-size:.68rem; color:var(--hint); letter-spacing:.03em; line-height:1.4; }
     .note { font-size:.74rem; color:var(--note); margin-bottom:13px; line-height:1.5; }
 
+    /* star-colour swatches (real star colours = the data's true values) */
+    .swatches { display:flex; flex-wrap:wrap; gap:8px; }
+    .swatch {
+      display:flex; align-items:center; gap:7px; background:var(--input);
+      border:1px solid var(--line); color:var(--dim); font-family:var(--f-display);
+      text-transform:uppercase; letter-spacing:.1em; font-size:.66rem; padding:8px 13px;
+      border-radius:4px; cursor:pointer; transition:all .2s;
+    }
+    .swatch .dot { width:12px; height:12px; border-radius:50%; background:var(--sc); box-shadow:0 0 9px var(--sc); }
+    .swatch:hover { border-color:var(--visor-dim); color:var(--text); }
+    .swatch.active { border-color:var(--blue); color:var(--text); background:#0c1d38; box-shadow:0 0 0 1px var(--blue), 0 0 14px #2d7bff3a; }
+
+    /* dissonant state (purple) + purple-star lock */
+    #dissonant_field.danger select { border-color:var(--dissonant); box-shadow:0 0 0 1px var(--dissonant), 0 0 14px #bf7bff44; color:var(--dissonant); }
+    #dissonant_field.danger label::after {
+      content:'⬡ DISSONANT'; margin-left:.7em; color:var(--dissonant); font-size:.82em; letter-spacing:.1em;
+    }
+    #dissonant_field.locked select { opacity:.6; cursor:not-allowed; }
+    .ds-term { color:var(--dissonant); text-shadow:0 0 8px #bf7bff55; }
+
+    .planet-block {
+      background:var(--panel-soft); border:1px solid var(--line-soft);
+      border-radius:5px; padding:13px; margin-bottom:10px;
+    }
+    .planet-block h4 {
+      font-family:var(--f-display); font-size:.64rem; color:var(--blue);
+      letter-spacing:.16em; text-transform:uppercase; margin-bottom:11px;
+    }
+    .planet-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:9px; }
+
     /* ---- "How to get this info" helper button (bright white circle, blue ?) ---- */
     .help-btn {
-      display:inline-flex; align-items:center; justify-content:center;
-      width:16px; height:16px; margin-left:.45em; vertical-align:middle; flex:none;
-      border:none; border-radius:50%; background:#ffffff; color:var(--blue); cursor:pointer;
-      font-family:var(--f-mono); font-size:.72rem; font-weight:700; line-height:1; padding:0;
-      box-shadow:0 0 8px #ffffff66; transition:box-shadow .15s, transform .1s;
+      margin-left:.4em; vertical-align:middle; flex:none;
+      border:none; background:transparent; color:#fff; cursor:pointer;
+      font-family:var(--f-mono); font-size:.9rem; font-weight:700; line-height:1; padding:0;
+      transition:color .15s, text-shadow .15s;
     }
-    .help-btn:hover { box-shadow:0 0 13px #ffffffcc; transform:scale(1.12); }
+    .help-btn:hover { color:var(--visor); text-shadow:0 0 8px #45e6deaa; }
 
     /* ---- Help side panel ---- */
     .help-panel {
@@ -605,15 +634,17 @@ function buildRows() {
       for (let p = 0; p < pCount; p++) opts += `<option value="${p}">Planet ${p + 1}</option>`;
       orbitsField = `<div class="field"><label>Orbits which planet?</label><select id="p${i}_orbits">${opts}</select></div>`;
     }
+    // show field helpers on the first planet only (they're identical for every planet)
+    const hb = key => i === 0 ? ` <button class="help-btn" type="button" data-help="${key}" title="How to get this info">?</button>` : '';
     html += `<div class="planet-block">
       <h4>${label}</h4>
       <div class="planet-grid">
-        <div class="field"><label>Name <button class="help-btn" type="button" data-help="planet_name" title="How to get this info">?</button></label><input type="text" id="p${i}_name" placeholder="${namePh}"></div>
-        <div class="field"><label>Type <button class="help-btn" type="button" data-help="planet_type" title="How to get this info">?</button></label><input type="text" id="p${i}_type" placeholder="${typePh}"></div>
-        <div class="field"><label>Extreme weather? <button class="help-btn" type="button" data-help="planet_weather" title="How to get this info">?</button></label><select id="p${i}_weather"><option>No</option><option>Yes</option></select></div>
-        <div class="field"><label>Aggressive sentinels? <button class="help-btn" type="button" data-help="planet_sentinels" title="How to get this info">?</button></label><select id="p${i}_sent"><option>No</option><option>Yes</option></select></div>
+        <div class="field"><label>Name${hb('planet_name')}</label><input type="text" id="p${i}_name" placeholder="${namePh}"></div>
+        <div class="field"><label>Type${hb('planet_type')}</label><input type="text" id="p${i}_type" placeholder="${typePh}"></div>
+        <div class="field"><label>Extreme weather?${hb('planet_weather')}</label><select id="p${i}_weather"><option>No</option><option>Yes</option></select></div>
+        <div class="field"><label>Aggressive sentinels?${hb('planet_sentinels')}</label><select id="p${i}_sent"><option>No</option><option>Yes</option></select></div>
         ${orbitsField}
-        <div class="field full-width"><label>Resources <span class="q">(comma separated)</span> <button class="help-btn" type="button" data-help="planet_resources" title="How to get this info">?</button></label><input type="text" id="p${i}_res" placeholder="e.g. Copper, Paraffinium, Sodium"></div>
+        <div class="field full-width"><label>Resources <span class="q">(comma separated)</span>${hb('planet_resources')}</label><input type="text" id="p${i}_res" placeholder="e.g. Copper, Paraffinium, Sodium"></div>
         <div class="field full-width"><label>Notes <span class="q">(optional)</span></label><input type="text" id="p${i}_notes" placeholder="Any extra notes"></div>
       </div>
     </div>`;

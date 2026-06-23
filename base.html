@@ -205,13 +205,12 @@
 
     /* ---- "How to get this info" helper button (bright white circle, blue ?) ---- */
     .help-btn {
-      display:inline-flex; align-items:center; justify-content:center;
-      width:16px; height:16px; margin-left:.45em; vertical-align:middle; flex:none;
-      border:none; border-radius:50%; background:#ffffff; color:var(--blue); cursor:pointer;
-      font-family:var(--f-mono); font-size:.72rem; font-weight:700; line-height:1; padding:0;
-      box-shadow:0 0 8px #ffffff66; transition:box-shadow .15s, transform .1s;
+      margin-left:.4em; vertical-align:middle; flex:none;
+      border:none; background:transparent; color:#fff; cursor:pointer;
+      font-family:var(--f-mono); font-size:.9rem; font-weight:700; line-height:1; padding:0;
+      transition:color .15s, text-shadow .15s;
     }
-    .help-btn:hover { box-shadow:0 0 13px #ffffffcc; transform:scale(1.12); }
+    .help-btn:hover { color:var(--visor); text-shadow:0 0 8px #45e6deaa; }
 
     /* ---- Help side panel ---- */
     .help-panel {
