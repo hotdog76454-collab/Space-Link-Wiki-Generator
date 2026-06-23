@@ -430,7 +430,7 @@ function openHelp(key) {
   // Auto-load as many screenshots as exist: <key>-1.png, <key>-2.png, ... (up to 6).
   // Missing ones remove themselves, so add 1, 2 or more per field — no code changes.
   for (let i = 1; i <= 6; i++) {
-    html += `<img class="help-img" src="${HELP_IMG_BASE}${key}-${i}.png" alt="" onerror="this.remove()">`;
+    html += `<img class="help-img" src="${HELP_IMG_BASE}${key}-${i}.jpg" alt="" onerror="this.src.endsWith('.jpg') ? this.src=this.src.slice(0,-4)+'.png' : this.remove()">`;
   }
   html += '<p class="help-zoom">Click an image to view it full-size.</p>';
   document.getElementById('help_body').innerHTML = html;
