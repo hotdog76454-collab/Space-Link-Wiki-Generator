@@ -387,6 +387,16 @@ const GLYPH_BASE = 'https://cdn.jsdelivr.net/gh/nmsportals/nmsportals.github.io@
 
 function g(id) { return (document.getElementById(id)?.value || '').trim(); }
 
+/* Sanity-check a 12-glyph address (planet index 0–6; system index 1–0x2FF). */
+function addressIssue(s) {
+  const planet = parseInt(s[0], 16);
+  const sys = parseInt(s.slice(1, 4), 16);
+  if (planet > 6) return { hard: true, msg: `Planet index "${s[0]}" can't exist — a system has at most 6 planets (the 1st glyph should be 0–6).` };
+  if (sys === 0) return { hard: false, msg: "System index 000 isn't a real system — re-check glyphs 2–4." };
+  if (sys > 0x2FF) return { hard: false, msg: `System index ${s.slice(1, 4)} looks impossible — regions top out near 2FF (~767 systems). Double-check the address.` };
+  return null;
+}
+
 /* ---- Help content (text steps now; drop matching screenshots into a /help folder) ---- */
 const HELP_IMG_BASE = 'help/';
 const HELP = {
@@ -524,8 +534,14 @@ function updateResolver() {
 
   const status = document.getElementById('resolver_status');
   if (s.length === 12) {
-    status.className = 'resolver-status ok';
-    status.textContent = 'Address complete — 12 glyphs entered.';
+    const issue = addressIssue(s);
+    if (issue) {
+      status.className = 'resolver-status err';
+      status.textContent = issue.msg;
+    } else {
+      status.className = 'resolver-status ok';
+      status.textContent = 'Address complete — 12 glyphs entered.';
+    }
   } else {
     status.className = 'resolver-status';
     status.textContent = s.length === 0
@@ -594,6 +610,17 @@ function buildOutput() {
     document.querySelector('.resolver').scrollIntoView({ behavior: 'smooth' });
     document.getElementById('b_glyphs').focus();
     return;
+  }
+  if (glyphsRaw) {
+    const issue = addressIssue(glyphsRaw);
+    if (issue && issue.hard) {
+      const status = document.getElementById('resolver_status');
+      status.className = 'resolver-status err';
+      status.textContent = 'Cannot generate — ' + issue.msg;
+      document.querySelector('.resolver').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('b_glyphs').focus();
+      return;
+    }
   }
   const glyphs = glyphsRaw || '000000000000';
   const desc   = g('b_desc');

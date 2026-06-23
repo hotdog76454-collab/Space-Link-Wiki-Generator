@@ -699,6 +699,18 @@ function glyphsToCoords(glyphs) {
   return hx(Xg,4) + ':' + hx(Yg,4) + ':' + hx(Zg,4) + ':' + hx(SSSS,4);
 }
 
+/* Sanity-check a 12-glyph address. Planet index must be 0–6; system index
+   1–0x2FF (regions hold ~767 systems max). X/Y/Z can't be out of range in a
+   12-glyph address (fixed digit widths), so they aren't checked. */
+function addressIssue(s) {
+  const planet = parseInt(s[0], 16);
+  const sys = parseInt(s.slice(1, 4), 16);
+  if (planet > 6) return { hard: true, msg: `Planet index "${s[0]}" can't exist — a system has at most 6 planets (the 1st glyph should be 0–6).` };
+  if (sys === 0) return { hard: false, msg: "System index 000 isn't a real system — re-check glyphs 2–4." };
+  if (sys > 0x2FF) return { hard: false, msg: `System index ${s.slice(1, 4)} looks impossible — regions top out near 2FF (~767 systems). Double-check the address.` };
+  return null;
+}
+
 /* ---- Portal Address Resolver (signature) ---- */
 function buildGlyphStrip() {
   let html = '';
@@ -745,8 +757,14 @@ function updateResolver() {
     const [x, y, z, sys] = glyphsToCoords(s).split(':');
     setCoords(x, y, z, sys);
     readout.classList.add('resolved');
-    status.className = 'resolver-status ok';
-    status.textContent = 'Address resolved — galactic coordinates locked.';
+    const issue = addressIssue(s);
+    if (issue) {
+      status.className = 'resolver-status err';
+      status.textContent = issue.msg;
+    } else {
+      status.className = 'resolver-status ok';
+      status.textContent = 'Address resolved — galactic coordinates locked.';
+    }
   } else {
     setCoords('––––', '––––', '––––', '––––');
     readout.classList.remove('resolved');
@@ -869,6 +887,14 @@ function buildOutput() {
     status.className = 'resolver-status err';
     status.textContent = 'Portal glyph problem: ' + err.message;
     document.querySelector('.resolver').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+  const addrIssue = addressIssue(glyphs);
+  if (addrIssue && addrIssue.hard) {
+    status.className = 'resolver-status err';
+    status.textContent = 'Cannot generate — ' + addrIssue.msg;
+    document.querySelector('.resolver').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('glyphs').focus();
     return;
   }
 
