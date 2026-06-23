@@ -149,19 +149,25 @@
     /* ---- First-visit intro splash (plays on direct arrivals, not tool-to-tool nav) ---- */
     #intro {
       position:fixed; inset:0; z-index:200; background:var(--void); cursor:pointer;
-      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.1rem;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.6rem;
       animation: introOut .8s ease 3.5s forwards;
     }
     .intro-skip #intro { display:none; }
-    #intro .intro-title {
-      font-family:var(--f-display); font-weight:700; text-transform:uppercase;
-      letter-spacing:.24em; font-size:clamp(1.6rem,5.5vw,2.9rem); color:var(--text);
-      text-shadow:0 0 30px #45e6de33; opacity:0; animation: introIn .9s ease .2s forwards;
-    }
     #intro .intro-logo {
-      width:clamp(190px,32vw,310px); height:auto; margin-top:.2rem;
-      opacity:0; animation: introLogo 1.1s ease .75s forwards;
+      width:clamp(180px,30vw,290px); height:auto;
+      opacity:0; animation: introLogo 1.1s ease .2s forwards;
       filter:drop-shadow(0 0 22px #2d7bff55);
+    }
+    #intro .intro-title {
+      font-family:var(--f-display); font-weight:700; text-transform:uppercase; text-align:center;
+      letter-spacing:.24em; padding-left:.24em; /* offsets trailing tracking so it centres true */
+      font-size:clamp(1.5rem,5vw,2.6rem); color:var(--text);
+      text-shadow:0 0 28px #45e6de33; opacity:0; animation: introIn .9s ease .7s forwards;
+    }
+    #intro .intro-sub {
+      font-family:var(--f-display); letter-spacing:.18em; padding-left:.18em; text-align:center;
+      font-size:clamp(.66rem,1.7vw,.82rem); color:var(--hint);
+      opacity:0; animation: introIn .9s ease 1s forwards;
     }
     #intro .intro-skiphint {
       position:absolute; bottom:2rem; font-family:var(--f-display); font-size:.6rem;
@@ -179,8 +185,9 @@
 </head>
 <body>
 <div id="intro" aria-hidden="true">
-  <div class="intro-title">To See It All</div>
   <img class="intro-logo" src="logo.png" alt="Space Link Federation">
+  <div class="intro-title">Space Link</div>
+  <div class="intro-sub">To See It All</div>
   <div class="intro-skiphint">Click anywhere to skip</div>
 </div>
 <div class="container">
