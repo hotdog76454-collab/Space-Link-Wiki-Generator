@@ -87,14 +87,9 @@
     .nav-chip:hover { border-color:var(--blue); color:var(--text); box-shadow:0 0 16px #2d7bff44; }
 
     /* ---- Portal Address Resolver (the signature) ---- */
-    .resolver {
-      background:linear-gradient(180deg, #0b1626, #081020);
-      border:1px solid var(--line);
-      border-radius:6px;
-      padding:1.6rem 1.5rem 1.4rem;
-      margin-bottom:1.6rem;
-      box-shadow:0 0 40px #04070d80, inset 0 0 60px #0a1c3433;
-    }
+    /* On the base page the decoder + dial are two self-sizing modules, so the
+       short decoder doesn't drag empty space down beside the taller dial. */
+    .resolver { margin-bottom:1.6rem; }
     .resolver-head {
       display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:.5rem;
       margin-bottom:1.1rem;
@@ -105,7 +100,17 @@
     }
     .resolver-head .sub { font-size:.72rem; color:var(--hint); letter-spacing:.05em; }
 
-    .resolver-body { display:grid; grid-template-columns:1fr 232px; gap:1.4rem; align-items:start; }
+    .resolver-body { display:grid; grid-template-columns:1fr 248px; gap:1.4rem; align-items:start; }
+    .decoder, .dial {
+      position:relative;
+      background:linear-gradient(180deg, #0b1626, #081020);
+      border:1px solid var(--line); border-radius:6px;
+      padding:1.2rem 1.3rem; box-shadow:inset 0 0 50px #0a1c3422;
+    }
+    .decoder::before, .dial::before {
+      content:''; position:absolute; top:-1px; left:-1px; width:13px; height:13px;
+      border-top:1.5px solid var(--visor); border-left:1.5px solid var(--visor); pointer-events:none;
+    }
     .decoder { min-width:0; }
 
     .glyph-input {
@@ -204,7 +209,7 @@
       text-transform:uppercase; color:var(--dim);
     }
     /* qualifier in a label, e.g. "(in-game)" — mono so the parentheses render curved */
-    .field label .q { font-family:var(--f-mono); text-transform:none; letter-spacing:.02em; color:var(--dim); }
+    .field label .q { font-family:var(--f-mono); text-transform:none; letter-spacing:.02em; color:var(--note); }
     .field input, .field select {
       background:var(--input); border:1px solid var(--line); border-radius:4px; color:var(--text);
       font-family:var(--f-mono); font-size:.86rem; padding:8px 10px; width:100%;
@@ -280,7 +285,7 @@
   </header>
 
   <!-- SIGNATURE: Portal Address Resolver (the base's home system) -->
-  <div class="resolver hud"><span class="corners"></span>
+  <div class="resolver">
     <div class="resolver-head">
       <span class="title">⬡ System Address</span>
       <span class="sub">Click glyphs, or type the address</span>
