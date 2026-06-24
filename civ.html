@@ -494,7 +494,7 @@ const HELP = {
     "Then interact with the portal in your capital system to read off its 12-glyph address.",
     "Click the glyphs on the dial here, or type the code in."] },
   civsize: { title:'Civ size', steps:[
-    "How big your civilization is — its category by member count and activity (e.g. Solo, Small, Medium, Large).",
+    "How big your civilization is — its category, by member count and activity.",
     "Pick the one that fits; if you're just starting out, Solo or Small is normal.",
     "Full breakdown of every tier: <a href=\"https://nomanssky.fandom.com/wiki/Civilization_Categories\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--visor)\">Civilization Categories</a>."] },
   wiki: { title:'How to get this onto the wiki', steps:[
@@ -512,9 +512,9 @@ function openHelp(key) {
   // Auto-load as many screenshots as exist: <key>-1.jpg, <key>-2.jpg, ... (up to 6).
   // Missing ones remove themselves; .jpg is tried first with a .png fallback.
   for (let i = 1; i <= 6; i++) {
-    html += `<img class="help-img" src="${HELP_IMG_BASE}${key}-${i}.jpg" alt="" onerror="this.src.endsWith('.jpg') ? this.src=this.src.slice(0,-4)+'.png' : this.remove()">`;
+    html += `<img class="help-img" src="${HELP_IMG_BASE}${key}-${i}.jpg" alt="" onload="this.closest('.help-body').querySelector('.help-zoom').style.display=''" onerror="this.src.endsWith('.jpg') ? this.src=this.src.slice(0,-4)+'.png' : this.remove()">`;
   }
-  html += '<p class="help-zoom">Click an image to view it full-size.</p>';
+  html += '<p class="help-zoom" style="display:none">Click an image to view it full-size.</p>';
   document.getElementById('help_body').innerHTML = html;
   document.getElementById('help_panel').classList.add('open');
 }
